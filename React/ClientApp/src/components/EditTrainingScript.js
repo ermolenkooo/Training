@@ -1,11 +1,318 @@
-﻿import React, { Component } from 'react';
+﻿import React, { Component, useReducer } from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Link, useHistory } from "react-router-dom";
+
+export class ContextMenus extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { modal: false, type_id: 0, types: [], instance: "Выберете экземпляр", state_id: 0, states: [], modalInstance: false, instances: [], showFuncMenu: false, showMarkMenu: false, showEventsMenu: false };
+        this.functionClick = this.functionClick.bind(this);
+        this.markClick = this.markClick.bind(this);
+        this.eventsClick = this.eventsClick.bind(this);
+        this.menuClick5 = this.menuClick5.bind(this);
+        this.onAddCondition = this.onAddCondition.bind(this);
+        this.toggle = this.toggle.bind(this);
+        this.handleChangeType = this.handleChangeType.bind(this);
+        this.toggleInstance = this.toggleInstance.bind(this);
+        this.handleChangeState = this.handleChangeState.bind(this);
+        this.onChange = this.onChange.bind(this);
+    }
+    onAddCondition() {
+
+    }
+    toggle() {
+        this.setState({ modal: !this.state.modal, showFuncMenu: false, showEventsMenu: false, showMarkMenu: false });
+    }
+    handleChangeType() {
+
+    }
+    toggleInstance() {
+        this.setState({ modalInstance: !this.state.modalInstance });
+    }
+    handleChangeState() {
+
+    }
+    onChange() {
+
+    }
+    functionClick() {
+        this.setState({ showFuncMenu: !this.state.showFuncMenu, showEventsMenu: false, showMarkMenu: false });
+    }
+    eventsClick() {
+        this.setState({ showEventsMenu: !this.state.showEventsMenu, showFuncMenu: false, showMarkMenu: false });
+    }
+    markClick() {
+        this.setState({ showMarkMenu: !this.state.showMarkMenu, showFuncMenu: false, showEventsMenu: false });
+    }
+    menuClick5() {
+        alert("estoy aqui5");
+    }
+
+    render() {
+        var functionClick = this.functionClick;
+        var markClick = this.markClick;
+        var eventsClick = this.eventsClick;
+        return (
+            <div>
+                <ul className="right-menus">
+                    <li key="1" onClick={this.toggle}>
+                        Условие
+                    </li>
+                    <li key="2" onClick={this.functionClick}>
+                        Функция
+                    </li>
+                    <li key="3" onClick={this.eventsClick}>
+                        Событие
+                    </li>
+                    <li key="4" onClick={this.markClick}>
+                        Оценка
+                    </li>
+                    <li key="5" onClick={this.menuClick5}>
+                        Обозначить событие
+                    </li>
+                </ul>
+
+                {this.state.showFuncMenu && <ContextMenusFunction toggle={functionClick} />}
+                {this.state.showMarkMenu && <ContextMenusMark toggle={markClick} />}
+                {this.state.showEventsMenu && <ContextMenusEvents toggle={eventsClick} />}
+
+                {/*модальное окно выбора экземпляра*/}
+                <Modal isOpen={this.state.modalInstance}>
+                    <form>
+                        <ModalHeader><h5>Выбор экземпляра</h5></ModalHeader>
+
+                        <ModalBody>
+                            <div>
+                                {
+                                    this.state.instances.map(function (i) {
+                                        return <div>
+                                            <label>
+                                                <input type="radio" name="myRadio" onChange={onChange} value={i.id} />
+                                                {i.name}
+                                            </label>
+                                        </div>
+                                    })
+                                }
+                            </div>
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button className="btn btn-success" onClick={this.toggleInstance}>Выбрать</Button>
+                            <Button color="danger" onClick={this.toggleInstance}>Отмена</Button>
+                        </ModalFooter>
+                    </form>
+                </Modal>
+
+                {/*модальное окно выбора состояния объекта*/}
+                <Modal isOpen={this.state.modal}>
+                    <form>
+                        <ModalHeader><h5>Окно выбора состояния объекта</h5></ModalHeader>
+
+                        <ModalBody>
+                            <form>
+                                <div className="form-group">
+                                    <label className="control-label required">Тип</label>
+                                    <select className="form-control" id="InputType" required="required" placeholder="Выберете тип"
+                                        value={this.state.type_id}
+                                        onChange={this.handleChangeType}>
+                                        {
+                                            this.state.types.map(function (t) {
+                                                return <option value={t.id}>{t.name}</option>
+                                            })
+                                        }
+                                    </select>
+                                </div>
+                                <div className="form-group">
+                                    <label>Экземпляр</label>
+                                    <p></p>
+                                    <label>{this.state.instance}</label>
+                                    <p></p>
+                                    <button onClick={this.toggleInstance} style={{ marginRight: '10px', minWidth: '250px' }}>Выберете экземпляр</button>
+                                </div>
+                                <div className="form-group">
+                                    <label className="control-label required">Состояние</label>
+                                    <select className="form-control" id="InputState" required="required" placeholder="Выберете состояние"
+                                        value={this.state.state_id}
+                                        onChange={this.handleChangeState}>
+                                        {
+                                            this.state.states.map(function (s) {
+                                                return <option value={s.id}>{s.name}</option>
+                                            })
+                                        }
+                                    </select>
+                                </div>
+                            </form>
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button className="btn btn-success" onClick={this.onAddCondition}>OK</Button>
+                            <Button color="danger" onClick={this.toggle}>Отмена</Button>
+                        </ModalFooter>
+                    </form>
+                </Modal>
+
+            </div>
+        );
+    }
+}
+
+export class ContextMenusFunction extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { modal: false, units: "", time: 0 };
+        this.andClick = this.andClick.bind(this);
+        this.orClick = this.orClick.bind(this);
+        this.toggle = this.toggle.bind(this);
+        this.handleChangeUnits = this.handleChangeUnits.bind(this);
+        this.handleChangeTime = this.handleChangeTime.bind(this);
+        this.onAddFunction = this.onAddFunction.bind(this);
+    }
+    toggle() {
+        this.setState({ modal: !this.state.modal });
+    }
+    andClick() {
+        this.props.toggle();
+    }
+    orClick() {
+        this.props.toggle();
+    }
+    handleChangeUnits() {
+
+    }
+    handleChangeTime() {
+
+    }
+    onAddFunction() {
+        this.props.toggle();
+    }
+    render() {
+        return (
+            <div>
+                <ul className="right-menus">
+                    <li key="1" onClick={this.toggle}>
+                        Выдержка времени
+                    </li>
+                    <li key="2" onClick={this.andClick}>
+                        Логическое И
+                    </li>
+                    <li key="3" onClick={this.orClick}>
+                        Логическое ИЛИ
+                    </li>
+                </ul>
+
+                {/*модальное окно установки времени*/}
+                <Modal isOpen={this.state.modal}>
+                    <form>
+                        <ModalHeader><h5>Окно установки времени</h5></ModalHeader>
+
+                        <ModalBody>
+                            <form>
+                                <div className="parent">
+                                    <input typeName="number" value={this.state.time} onChange={this.handleChangeTime} />
+                                    <select onChange={this.handleChangeUnits} value={this.state.units}>
+                                        <option value="м">м</option>
+                                        <option value="сек">сек</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button className="btn btn-success" onClick={this.onAddFunction}>OK</Button>
+                            <Button color="danger" onClick={this.toggle}>Отмена</Button>
+                        </ModalFooter>
+                    </form>
+                </Modal>
+
+            </div>
+        );
+    }
+}
+
+export class ContextMenusEvents extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { events: [] };
+    }
+
+    allEvents = [
+        { "id": "1", "name": "event1" },
+        { "id": "2", "name": "event2" },
+        { "id": "3", "name": "event3" },
+        { "id": "4", "name": "event4" },
+        { "id": "5", "name": "event5" }];
+
+    render() {
+        var toggle = this.props.toggle;
+        return (
+            <div>
+                <ul className="right-menus">
+                    {
+                        this.allEvents.map(function (e) {
+                            return <li key={e.id} onClick={toggle}>{e.name}</li>
+                        })
+                    }
+                </ul>
+            </div>
+        );
+    }
+}
+
+export class ContextMenusMark extends Component {
+    constructor(props) {
+        super(props);
+        this.state = { modal: false, mark: "" };
+        this.toggle = this.toggle.bind(this);
+        this.handleChangeMark = this.handleChangeMark.bind(this);
+        this.onAddMark = this.onAddMark.bind(this);
+    }
+    toggle() {
+        this.setState({ modal: !this.state.modal });
+    }
+    handleChangeMark() {
+
+    }
+    onAddMark() {
+        this.props.toggle();
+    }
+    render() {
+        return (
+            <div>
+                <ul className="right-menus">
+                    <li key="1" onClick={this.toggle}>
+                        Снять
+                    </li>
+                </ul>
+
+                {/*модальное окно выбора баллов для снятия*/}
+                <Modal isOpen={this.state.modal}>
+                    <form>
+                        <ModalHeader><h5>Окно выбора баллов для снятия</h5></ModalHeader>
+
+                        <ModalBody>
+                            <form>
+                                <input typeName="number" value={this.state.mark} onChange={this.handleChangeMark} />
+                            </form>
+                        </ModalBody>
+
+                        <ModalFooter>
+                            <Button className="btn btn-success" onClick={this.onAddMark}>OK</Button>
+                            <Button color="danger" onClick={this.toggle}>Отмена</Button>
+                        </ModalFooter>
+                    </form>
+                </Modal>
+
+            </div>
+        );
+    }
+}
 
 export class Operation extends Component { 
 
     constructor(props) {
         super(props);
-        this.state = { opertype: props.operation.id_type, command: props.operation.id_command, name: props.operation.name };
+        this.state = {
+            opertype: props.operation.id_type, command: props.operation.id_command, name: props.operation.name, showRightMenu: false, positiony: 0, positionx: 0 };
         this.handleChangeType = this.handleChangeType.bind(this);
         this.handleChangeCommand = this.handleChangeCommand.bind(this);
         this.onClick = this.onClick.bind(this);
@@ -16,39 +323,26 @@ export class Operation extends Component {
     handleChangeCommand(event) {
         this.setState({ command: event.target.value });
     }
-    onClick() { 
-        
+    onClick(event) { 
+        event.preventDefault();
+        if (!this.state.showRightMenu)
+            this.setState({ positionx: event.pageX, positiony: event.pageY, showRightMenu: true });
+        else 
+            this.setState({ showRightMenu: false });
     }
     render() {
-        return <div>
+        var posy = this.state.postiony;
+        var posx = this.state.postionx;
+        var oper = this.props.operation;
+        return (
+        <div>
             <input type="checkbox" className="form-check-input" name="check" />
             <p>{this.state.name}</p>
-            <table className="table table-striped table-hover" id="operationTable">
-                <tr>
-                    <td>
-                        <select placeholder="Выберите тип" value={this.state.opertype} onChange={this.handleChangeType} style={{ minWidth: '250px' }}>
-                            {
-                                this.props.types.map(function (t) {
-                                    return <option value={t.id}>{t.name}</option>
-                                })
-                            }
-                        </select>
-                    </td>
-                    <td>
-                        <button onClick={this.onClick} style={{ marginRight: '10px', minWidth: '250px' }}>Экземпляр</button>
-                    </td>
-                    <td>
-                        <select placeholder="Выберите вид команды" value={this.state.command} onChange={this.handleChangeCommand} style={{ minWidth: '250px' }}>
-                            {
-                                this.props.commands.map(function (c) {
-                                    return <option value={c.id}>{c.name}</option>
-                                })
-                            }
-                        </select>
-                    </td>
-                </tr>
-            </table>
-        </div>;
+                <img src="images/arrow.png" width="50px" onClick={this.onClick} />
+            
+            {this.state.showRightMenu && <ContextMenus postiony={posy} postionx={posx} operation={oper} />}
+        </div>
+        );
     }
 }
 
@@ -73,7 +367,7 @@ export class EditTrainingScript extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { modalOper: false, nameOper: "", operations: [], commands: [], types: [], modal: false, name: "", trainings: [] };
+        this.state = { modalOper: false, nameOper: "", operations: [], commands: [], types: [], modal: false, name: "", trainings: [], id_training: 0 };
         this.toggleOper = this.toggleOper.bind(this);
         this.toggle = this.toggle.bind(this);
         this.handleChangeName = this.handleChangeName.bind(this);
@@ -122,6 +416,7 @@ export class EditTrainingScript extends React.Component {
     }
 
     async getOperations(event, id) {
+        this.setState({ id_training: id });
         var response = await fetch('operations/' + id);
         var data = await response.json();
         this.setState({ operations: data });
@@ -192,7 +487,7 @@ export class EditTrainingScript extends React.Component {
     }
 
     goTo() {
-
+        
     }
     
     render() {
@@ -221,7 +516,8 @@ export class EditTrainingScript extends React.Component {
                         <Button style={{ margin: 10 }} onClick={this.toggleOper}>Добавить операцию</Button>
                         <Button style={{ margin: 10 }} onClick={this.deleteRow}>Удалить</Button>
                         <Button style={{ margin: 10 }} onClick={this.execute}>Выполнить все операции последовательно</Button>
-                        <Button style={{ margin: 10 }} onClick={this.goTo}>Перейти к оценке тренировки</Button>
+                        <Evaluation id_training={this.state.id_training} />
+                        {/*<Button style={{ margin: 10 }}><Link to={{ pathname: "/evaluation", id_training: this.state.id_training }}>Перейти к оценке тренировки</Link></Button>*/}
                     </div>
 
                     <p></p>
@@ -285,3 +581,15 @@ export class EditTrainingScript extends React.Component {
         );
     }
 }
+
+const Evaluation = (id_training) => {
+    let history = useHistory();
+
+    const goToEvaluation = () => {
+        history.push("/evaluation/" + id_training.id_training);
+    };
+    return (
+        <Button style={{ margin: 10 }} onClick={goToEvaluation}>Перейти к оценке тренировки</Button>
+    );
+};
+
