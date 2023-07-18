@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-//import { Route } from 'react-router';
 import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
 import { Layout } from './components/Layout';
 import { FetchData } from './components/FetchData';
@@ -17,7 +16,6 @@ export default class App extends Component {
               <Layout>
                 <Route exact path='/' component={EditTrainingScript} />
                 <Route path='/evaluation/:id' component={EvaluationOfActions} />
-                <ConfigModule></ConfigModule>
             </Layout>
         </Router>
     );

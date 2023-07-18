@@ -4,8 +4,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 export class ConfigModule extends React.Component { //класс модального окна настроек
     constructor(props) {
         super(props);
-        this.state = { modal: true, pathDB: "", pathDir: "", IP: "" };
-        this.fileInput = React.createRef();
+        this.state = { modal: false, pathDB: "", pathDir: "", IP: "" };
         this.toggle = this.toggle.bind(this);
         this.handleChangePathDB = this.handleChangePathDB.bind(this);
         this.handleChangePathDir = this.handleChangePathDir.bind(this);
@@ -29,7 +28,6 @@ export class ConfigModule extends React.Component { //класс модальн�
     }
     handleSubmit(e) { //обрабатываем клик на кнопку "сохранить"
         e.preventDefault();
-
         this.toggle();
     }
     loadData() { //загрузка данных
@@ -41,23 +39,23 @@ export class ConfigModule extends React.Component { //класс модальн�
     render() {
         return (
             <div>
+                <Button outline onClick={this.toggle}>Настройка</Button>
                 <Modal isOpen={this.state.modal}>
                     <form onSubmit={this.handleSubmit}>
                         <ModalHeader><h5>Модуль настройки</h5></ModalHeader>
 
                         <ModalBody>
                             <form>
-
                                 <div className="form-group">
                                     <label className="control-label required">Путь к БД Scada</label>
                                     <p></p>
-                                    <input type="file" ref={this.fileInput} id="InputPathDB" onChange={this.handleChangePathDB} />
+                                    <input type="text" className="form-control" id="InputPathDB" onChange={this.handleChangePathDB} value={this.state.pathDB} placeholder="Введите путь к базе данных" />
                                 </div>
 
                                 <div className="form-group">
                                     <label className="control-label required">Путь к папке с отчетами</label>
                                     <p></p>
-                                    <input type="file" directory="" webkitdirectory="" ref={this.fileInput} id="InputPathDir" onChange={this.handleChangePathDir} />
+                                    <input type="text" className="form-control" id="InputPathDir" onChange={this.handleChangePathDir} value={this.state.pathDir} placeholder="Введите путь к папке с отчетами" />
                                 </div>
 
                                 <div className="form-group">
@@ -67,7 +65,6 @@ export class ConfigModule extends React.Component { //класс модальн�
                                         value={this.state.IP}
                                         onChange={this.handleChangeIP} />
                                 </div>
-
                             </form>
                         </ModalBody>
 
