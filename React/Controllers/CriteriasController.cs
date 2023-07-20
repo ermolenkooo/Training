@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ArchiveRederScadaV;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using React.Models;
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace React.Controllers
@@ -10,15 +13,18 @@ namespace React.Controllers
     [ApiController]
     public class CriteriasController : ControllerBase
     {
-        List<Criteria> criterias = new List<Criteria>();
+        TrainingDbManager dbManager;
+
+        public CriteriasController()
+        {
+            dbManager = new TrainingDbManager();
+            dbManager.ConnectToDb("D:\\work\\programs\\React\\React\\TrainingEvents.db");
+        }
 
         [HttpGet("{id}")]
         public IEnumerable<Criteria> Get([FromRoute] int id)
         {
-            criterias.Add(new Criteria { Id = 1, Name = "criteria1", Id_function = 1, Id_type = 1, Id_training = 1, Price = 1 });
-            criterias.Add(new Criteria { Id = 2, Name = "criteria2", Id_function = 2, Id_type = 2, Id_training = 2, Price = 2 });
-            criterias.Add(new Criteria { Id = 3, Name = "criteria3", Id_function = 3, Id_type = 3, Id_training = 2, Price = 3 });
-            return criterias.Where(x => x.Id_training == id).ToList();
+            return dbManager.GetAllCriterias(id);
         }
 
         [HttpPost]
@@ -29,7 +35,19 @@ namespace React.Controllers
                 return BadRequest(ModelState);
             }
             //добавление в базу данных
-            return CreatedAtAction("GetOperation", new { id = c.Id }, c);
+            dbManager.AddCriteria(c);
+            return CreatedAtAction("GetCriteria", new { id = c.Id }, c);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update([FromRoute] int id, [FromBody] Criteria c) 
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            dbManager.UpdateCriteria(id, c);
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
@@ -40,6 +58,7 @@ namespace React.Controllers
                 return BadRequest(ModelState);
             }
             //тут удаление из базы данных
+            dbManager.DeleteCriteria(id);
             return NoContent();
         }
     }

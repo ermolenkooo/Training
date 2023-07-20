@@ -5,38 +5,63 @@ export class Criteria extends Component {
 
     constructor(props) {
         super(props);
-        this.state = { id_instance: 0, instance: "", modal: false, type: props.criteria.id_type, func: props.criteria.id_function, name: props.criteria.name, price: props.criteria.price, instances: [] };
+        this.state = { id_instance: props.criteria.id_instance, instance: "", modal: false, type: props.criteria.id_type, func: props.criteria.id_function, name: props.criteria.name, price: props.criteria.price, instances: [] };
         this.handleChangeType = this.handleChangeType.bind(this);
         this.handleChangeFunction = this.handleChangeFunction.bind(this);
         this.handleChangePrice = this.handleChangePrice.bind(this);
         this.onClick = this.onClick.bind(this);
         this.toggle = this.toggle.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.update = this.update.bind(this);
+        this.loadData = this.loadData.bind(this);
+        this.changeInstance = this.changeInstance.bind(this);
+    }
+    async loadData() {
+        var response = await fetch('instances/instancesOfCriteria/' + this.state.type);
+        var data = await response.json();
+        this.setState({ instances: data });
+        this.setState({ instance: this.state.instances.filter(e => e.id == this.state.id_instance)[0].name });
+    }
+    componentDidMount() {
+        this.loadData();
     }
     async toggle() {
         var response = await fetch('instances/instancesOfCriteria/' + this.state.type);
         var data = await response.json();
         this.setState({ instances: data });
-        this.setState({
-            modal: !this.state.modal
-        });
+        this.setState({ modal: !this.state.modal });
     }
     handleChange(event) {
         this.setState({ id_instance: event.target.value, instance: this.state.instances.filter(e => e.id == event.target.value)[0].name });
     }
+    changeInstance() {
+        this.update();
+        this.toggle();
+    }
     handleChangeType(event) {
-        this.setState({ type: event.target.value });
+        this.setState({ type: event.target.value, id_instance: 0, instance: "" }, () => { this.update(); });
     }
     handleChangeFunction(event) {
-        this.setState({ func: event.target.value });
+        this.setState({ func: event.target.value }, () => { this.update(); });
     }
     handleChangePrice(event) {
-        this.setState({ price: event.target.value });
+        this.setState({ price: event.target.value }, () => { this.update(); });
     }
     onClick() {
         this.setState({
             modal: !this.state.modal
         });
+    }
+    async update() {
+        if (this.state.name != "") {
+            let response = await fetch('criterias/' + this.props.criteria.id, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify({ price: this.state.price, id_type: this.state.type, id_function: this.state.func, id_instance: this.state.id_instance })
+            });
+        }
     }
     render() {
         var onChange = this.handleChange;
@@ -67,6 +92,9 @@ export class Criteria extends Component {
                             }
                         </select>
                     </td>
+                    <td>
+                        <input type="number" value={this.state.price} onChange={this.handleChangePrice} style={{ minWidth: '250px' }} />
+                    </td>
                 </tr>
             </table>
 
@@ -90,7 +118,7 @@ export class Criteria extends Component {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button className="btn btn-success" onClick={this.toggle}>Выбрать</Button>
+                        <Button className="btn btn-success" onClick={this.changeInstance}>ОК</Button>
                         <Button color="danger" onClick={this.toggle}>Отмена</Button>
                     </ModalFooter>
                 </form>
@@ -109,6 +137,8 @@ export class EvaluationOfActions extends React.Component {
         this.handleChangeName = this.handleChangeName.bind(this);
         this.addRow = this.addRow.bind(this);
         this.deleteRow = this.deleteRow.bind(this);
+        this.selectAll = this.selectAll.bind(this);
+        this.unselectAll = this.unselectAll.bind(this);
         this.loadData = this.loadData.bind(this);
     }
 
@@ -147,9 +177,11 @@ export class EvaluationOfActions extends React.Component {
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
-                body: JSON.stringify({ name: this.state.name, id_type: 1, id_function: 1, price: 0, id_training: this.state.id_training /*this.props.location.id_training*/ })
+                body: JSON.stringify({ name: this.state.name, id_training: this.state.id_training })
             });
         }
+        this.loadData();
+        this.toggle();
     }
 
     async deleteRow() {
@@ -164,6 +196,20 @@ export class EvaluationOfActions extends React.Component {
         this.loadData();
     }
 
+    selectAll() {
+        var checkboxes = document.getElementsByName('check');
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = true;
+        }
+    }
+
+    unselectAll() {
+        var checkboxes = document.getElementsByName('check');
+        for (var i = 0, n = checkboxes.length; i < n; i++) {
+            checkboxes[i].checked = false;
+        }
+    }
+
     render() {
         var types = this.state.types;
         var functions = this.state.functions;
@@ -173,6 +219,8 @@ export class EvaluationOfActions extends React.Component {
 
                 <div>
                     <div class="parent">
+                        <Button style={{ margin: 10 }} onClick={this.selectAll}>Выделить все</Button>
+                        <Button style={{ margin: 10 }} onClick={this.unselectAll}>Снять выделение со всех</Button>
                         <Button style={{ margin: 10 }} onClick={this.toggle}>Добавить критерий</Button>
                         <Button style={{ margin: 10 }} onClick={this.deleteRow}>Удалить</Button>
                     </div>
@@ -189,7 +237,7 @@ export class EvaluationOfActions extends React.Component {
                 </div>
 
                 <Modal isOpen={this.state.modal}>
-                    <form onSubmit={this.addRow}>
+                    <form>
                         <ModalHeader><h5>Добавление критерия</h5></ModalHeader>
 
                         <ModalBody>
@@ -205,7 +253,7 @@ export class EvaluationOfActions extends React.Component {
                         </ModalBody>
 
                         <ModalFooter>
-                            <input type="submit" value="Добавить" className="btn btn-success" />
+                            <Button className="btn btn-success" onClick={this.addRow}>Добавить</Button>
                             <Button color="danger" onClick={this.toggle}>Отмена</Button>
                         </ModalFooter>
                     </form>

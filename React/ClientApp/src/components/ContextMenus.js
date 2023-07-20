@@ -4,7 +4,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 export class ContextMenus extends Component {
     constructor(props) {
         super(props);
-        this.state = { modal: false, type_id: 0, types: [], id_instance: 0, instance: "Выберете экземпляр", state_id: 0, states: [], modalInstance: false, instances: [], showFuncMenu: false, showMarkMenu: false, showEventsMenu: false };
+        this.state = { modal: false, type_id: 0, types: [], id_instance: 0, instance: "Выберете экземпляр", state_id: 0, states: [], modalInstance: false, instances: [], showFuncMenu: false, showMarkMenu: false, showEventsMenu: false, modalTime: false, units: "м", time: 0 };
         this.functionClick = this.functionClick.bind(this);
         this.markClick = this.markClick.bind(this);
         this.eventsClick = this.eventsClick.bind(this);
@@ -15,6 +15,10 @@ export class ContextMenus extends Component {
         this.toggleInstance = this.toggleInstance.bind(this);
         this.handleChangeState = this.handleChangeState.bind(this);
         this.onChange = this.onChange.bind(this);
+        this.toggleTime = this.toggleTime.bind(this);
+        this.handleChangeUnits = this.handleChangeUnits.bind(this);
+        this.handleChangeTime = this.handleChangeTime.bind(this);
+        this.onAddFunction = this.onAddFunction.bind(this);
     }
     onAddCondition(str) {
         this.props.add(str);
@@ -52,6 +56,19 @@ export class ContextMenus extends Component {
     menuClick5() {
         
     }
+    toggleTime() {
+        this.setState({ modalTime: !this.state.modalTime });
+    }
+    handleChangeUnits(event) {
+        this.setState({ units: event.target.value });
+    }
+    handleChangeTime(event) {
+        this.setState({ time: event.target.value });
+    }
+    onAddFunction() {
+        this.toggleTime();
+        this.props.add("t ⩾ " + this.state.time + this.state.units);
+    }
 
     render() {
         var functionClick = this.functionClick;
@@ -62,6 +79,9 @@ export class ContextMenus extends Component {
             <div className="horizontalLeft">
                 <div>
                     <ul className="right-menus">
+                        <li key="0" onClick={this.toggleTime}>
+                            Выдержка времени
+                        </li>
                         <li key="1" onClick={this.toggle}>
                             Условие
                         </li>
@@ -82,7 +102,6 @@ export class ContextMenus extends Component {
                 </div>
 
                 {this.state.showFuncMenu && <ContextMenusFunction toggle={functionClick} />}
-                {this.state.showMarkMenu && <ContextMenusMark toggle={markClick} />}
                 {this.state.showEventsMenu && <ContextMenusEvents toggle={eventsClick} />}
 
                 {/*модальное окно выбора экземпляра*/}
@@ -160,57 +179,8 @@ export class ContextMenus extends Component {
                     </form>
                 </Modal>
 
-            </div>
-        );
-    }
-}
-
-export class ContextMenusFunction extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { modal: false, units: "м", time: 0 };
-        this.andClick = this.andClick.bind(this);
-        this.orClick = this.orClick.bind(this);
-        this.toggle = this.toggle.bind(this);
-        this.handleChangeUnits = this.handleChangeUnits.bind(this);
-        this.handleChangeTime = this.handleChangeTime.bind(this);
-        this.onAddFunction = this.onAddFunction.bind(this);
-    }
-    toggle() {
-        this.setState({ modal: !this.state.modal });
-    }
-    andClick() {
-        this.props.toggle("И");
-    }
-    orClick() {
-        this.props.toggle("ИЛИ");
-    }
-    handleChangeUnits(event) {
-        this.setState({ units: event.target.value });
-    }
-    handleChangeTime(event) {
-        this.setState({ time: event.target.value });
-    }
-    onAddFunction() {
-        this.props.toggle("t ⩾ " + this.state.time + this.state.units);
-    }
-    render() {
-        return (
-            <div>
-                <ul className="right-menus">
-                    <li key="1" onClick={this.toggle}>
-                        Выдержка времени
-                    </li>
-                    <li key="2" onClick={this.andClick}>
-                        Логическое И
-                    </li>
-                    <li key="3" onClick={this.orClick}>
-                        Логическое ИЛИ
-                    </li>
-                </ul>
-
                 {/*модальное окно установки времени*/}
-                <Modal isOpen={this.state.modal}>
+                <Modal isOpen={this.state.modalTime}>
                     <form>
                         <ModalHeader><h5>Окно установки времени</h5></ModalHeader>
 
@@ -228,10 +198,39 @@ export class ContextMenusFunction extends Component {
 
                         <ModalFooter>
                             <Button className="btn btn-success" onClick={this.onAddFunction}>OK</Button>
-                            <Button color="danger" onClick={this.toggle}>Отмена</Button>
+                            <Button color="danger" onClick={this.toggleTime}>Отмена</Button>
                         </ModalFooter>
                     </form>
                 </Modal>
+
+            </div>
+        );
+    }
+}
+
+export class ContextMenusFunction extends Component {
+    constructor(props) {
+        super(props);
+        this.andClick = this.andClick.bind(this);
+        this.orClick = this.orClick.bind(this);
+    }
+    andClick() {
+        this.props.toggle("И");
+    }
+    orClick() {
+        this.props.toggle("ИЛИ");
+    }
+    render() {
+        return (
+            <div>
+                <ul className="right-menus">
+                    <li key="1" onClick={this.andClick}>
+                        Логическое И
+                    </li>
+                    <li key="2" onClick={this.orClick}>
+                        Логическое ИЛИ
+                    </li>
+                </ul>
             </div>
         );
     }

@@ -36,20 +36,21 @@ export class Operation extends Component {
                 <input type="checkbox" className="form-check-input" name="check" />
                 <p>{ this.state.name }</p>
                 <div className="horizontalLeft">
-                    <img src="images/arrow.png" width="50px" height="40px" onClick={ this.onClick } />
+                    <div className="horizontalLeft">
+                        {
+                            this.state.conditions.map(function (c) {
+                                return (
+                                    <div className="condition">
+                                        <p className="text">{c}</p>
+                                    </div>
+                                );
+                            })
+                        }
+                    </div>
+                    <img src="images/arrow.png" width="50px" height="40px" style={{ marginTop: 25 }} onClick={ this.onClick } />
                     {this.state.showRightMenu && <ContextMenus operation={oper} add={add} /> }
                 </div>
-                <div className="horizontalLeft">
-                    {
-                        this.state.conditions.map(function (c) {
-                            return (
-                                <div className="condition">
-                                    <p className="text">{c}</p>
-                                </div>
-                            );
-                        })
-                    }
-                </div>
+                
             </div>
         );
     }
@@ -67,7 +68,7 @@ export class Training extends Component {
     }
     render() {
         return <div>
-            <p onClick={(e) => { this.props.func(e, this.state.data.id); }}>{this.state.data.name}</p>
+            <p onClick={(e) => { this.props.func(this.state.data.id); }}>{this.state.data.name}</p>
         </div>;
     }
 }
@@ -113,18 +114,18 @@ export class EditTrainingScript extends React.Component {
     }
 
     async onAddTraining() {
-        if (training) {
+        if (this.state.name) {
             let response = await fetch('trainings', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
-                body: JSON.stringify({ name: this.state.name })
+                body: JSON.stringify({ name: this.state.name, mark: 0 })
             });
         }
     }
 
-    async getOperations(event, id) {
+    async getOperations(id) {
         this.setState({ id_training: id });
         var response = await fetch('operations/' + id);
         var data = await response.json();
@@ -174,8 +175,10 @@ export class EditTrainingScript extends React.Component {
                 headers: {
                     'Content-Type': 'application/json;charset=utf-8'
                 },
-                body: JSON.stringify({ name: this.state.nameOper, id_type: 1, id_command: 1 })
+                body: JSON.stringify({ name: this.state.nameOper, id_training: this.state.id_training })
             });
+            this.getOperations(this.state.id_training);
+            this.toggleOper();
         }
     }
 
@@ -188,7 +191,7 @@ export class EditTrainingScript extends React.Component {
                 });
             }
         }
-        this.loadData();
+        this.getOperations(this.state.id_training);
     }
 
     execute() {
@@ -223,7 +226,7 @@ export class EditTrainingScript extends React.Component {
                         <Button style={{ margin: 10 }} onClick={this.selectAll}>Выделить все</Button>
                         <Button style={{ margin: 10 }} onClick={this.unselectAll}>Снять выделение со всех</Button>
                         <Button style={{ margin: 10 }} onClick={this.toggleOper}>Добавить операцию</Button>
-                        <Button style={{ margin: 10 }} onClick={this.deleteRow}>Удалить</Button>
+                        <Button style={{ margin: 10 }} onClick={this.deleteFRow}>Удалить</Button>
                         <Button style={{ margin: 10 }} onClick={this.execute}>Выполнить все операции последовательно</Button>
                         <Evaluation id_training={this.state.id_training} />
                         {/*<Button style={{ margin: 10 }}><Link to={{ pathname: "/evaluation", id_training: this.state.id_training }}>Перейти к оценке тренировки</Link></Button>*/}
@@ -241,7 +244,7 @@ export class EditTrainingScript extends React.Component {
                 </div>
 
                 <Modal isOpen={this.state.modalOper}>
-                    <form onSubmit={this.addRow}>
+                    <form>
                         <ModalHeader><h5>Добавление операции</h5></ModalHeader>
 
                         <ModalBody>
@@ -257,7 +260,7 @@ export class EditTrainingScript extends React.Component {
                         </ModalBody>
 
                         <ModalFooter>
-                            <input type="submit" value="Добавить" className="btn btn-success" />
+                            <Button className="btn btn-success" onClick={this.addRow}>Добавить</Button>
                             <Button color="danger" onClick={this.toggleOper}>Отмена</Button>
                         </ModalFooter>
                     </form>

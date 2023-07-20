@@ -37,6 +37,7 @@ ul.right-menus {
     padding: 5px;
     border-radius: 4px;
     margin-top: 15px;
+    list-style-type: none;
 }
 
 ul.right-menus li {

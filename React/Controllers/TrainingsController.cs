@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ArchiveRederScadaV;
+using Microsoft.AspNetCore.Mvc;
 using React.Models;
 using System.Collections.Generic;
 
@@ -8,15 +9,18 @@ namespace React.Controllers
     [ApiController]
     public class TrainingsController : ControllerBase
     {
-        List<Training> trainings = new List<Training>();
+        TrainingDbManager dbManager;
+
+        public TrainingsController()
+        {
+            dbManager = new TrainingDbManager();
+            dbManager.ConnectToDb("D:\\work\\programs\\React\\React\\TrainingEvents.db");
+        }
 
         [HttpGet]
         public IEnumerable<Training> Get()
         {
-            trainings.Add(new Training { Id = 1, Name = "training1" });
-            trainings.Add(new Training { Id = 2, Name = "training2" });
-            trainings.Add(new Training { Id = 3, Name = "training3" });
-            return trainings;
+            return dbManager.GetAllTraining();
         }
 
         [HttpPost]
@@ -27,6 +31,7 @@ namespace React.Controllers
                 return BadRequest(ModelState);
             }
             //добавление в базу данных
+            dbManager.AddTraining(t);
             return CreatedAtAction("GetOperation", new { id = t.Id }, t);
         }
     }

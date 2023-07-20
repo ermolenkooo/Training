@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ArchiveRederScadaV;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using React.Models;
 using System.Collections.Generic;
@@ -10,31 +11,20 @@ namespace React.Controllers
     [ApiController]
     public class OperationsController : ControllerBase
     {
-        List<Operation> operations = new List<Operation>();
+        TrainingDbManager dbManager;
+
+        public OperationsController()
+        {
+            dbManager = new TrainingDbManager();
+            dbManager.ConnectToDb("D:\\work\\programs\\React\\React\\TrainingEvents.db");
+        }
 
         [HttpGet("{id}")]
         public IEnumerable<Operation> Get([FromRoute] int id)
         {
-            operations.Add(new Operation { Id = 1, Name = "operation1", Id_command = 1, Id_type = 1, Id_training = 1 });
-            operations.Add(new Operation { Id = 2, Name = "operation2", Id_command = 2, Id_type = 2, Id_training = 2 });
-            operations.Add(new Operation { Id = 3, Name = "operation3", Id_command = 3, Id_type = 3, Id_training = 2 });
-            return operations.Where(x => x.Id_training == id).ToList();
+            return dbManager.GetAllOperations(id);
         }
 
-        /*[HttpGet("{id}")]
-        public IActionResult GetOperation([FromRoute] int id) 
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-            /*var operation = //получение;
-            if (operation == null)
-            {
-                return NotFound();
-            }*/
-            /*return Ok(/*operation);
-        }*/
 
         [HttpPost]
         public IActionResult Add([FromBody] Operation o)
@@ -44,6 +34,7 @@ namespace React.Controllers
                 return BadRequest(ModelState);
             }
             //добавление в базу данных
+            dbManager.AddOperation(o);
             return CreatedAtAction("GetOperation", new { id = o.Id }, o);
         }
 
@@ -55,6 +46,7 @@ namespace React.Controllers
                 return BadRequest(ModelState);
             }
             //тут удаление из базы данных
+            dbManager.DeleteOperation(id);
             return NoContent();
         }
     }

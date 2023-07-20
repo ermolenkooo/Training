@@ -12,9 +12,9 @@ namespace React.Controllers
         public IEnumerable<Function> Get()
         {
             List<Function> functions = new List<Function>();
-            functions.Add(new Function { Id = 1, Name = "функция1" });
-            functions.Add(new Function { Id = 2, Name = "функция2" });
-            functions.Add(new Function { Id = 3, Name = "функция3" });
+            functions.Add(new Function { Id = 1, Name = "Минимум на интервале" });
+            functions.Add(new Function { Id = 2, Name = "Максимум на интервале" });
+            functions.Add(new Function { Id = 3, Name = "Длительность пребывания в диапазоне" });
             return functions;
         }
     }

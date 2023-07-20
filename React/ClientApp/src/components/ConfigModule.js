@@ -4,14 +4,14 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 export class ConfigModule extends React.Component { //класс модального окна настроек
     constructor(props) {
         super(props);
-        this.state = { modal: false, pathDB: "", pathDir: "", IP: "" };
+        this.state = { modal: false, pathDB: "", pathDir: "", IP: "", count: 0 };
         this.toggle = this.toggle.bind(this);
         this.handleChangePathDB = this.handleChangePathDB.bind(this);
         this.handleChangePathDir = this.handleChangePathDir.bind(this);
         this.handleChangeIP = this.handleChangeIP.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleChangeCount = this.handleChangeCount.bind(this);
     }
-
     toggle() {
         this.setState({
             modal: !this.state.modal
@@ -26,11 +26,14 @@ export class ConfigModule extends React.Component { //класс модальн�
     handleChangeIP(event) {
         this.setState({ IP: event.target.value });
     }
-    handleSubmit(e) { //обрабатываем клик на кнопку "сохранить"
+    handleChangeCount(event) {
+        this.setState({ count: event.target.value });
+    }
+    handleSubmit(e) { 
         e.preventDefault();
         this.toggle();
     }
-    loadData() { //загрузка данных
+    loadData() { 
 
     }
     componentDidMount() {
@@ -60,10 +63,13 @@ export class ConfigModule extends React.Component { //класс модальн�
 
                                 <div className="form-group">
                                     <label className="control-label required">IP компьютера с запущенной архивной станцией</label>
-                                    <input type="text"
-                                        className="form-control" id="InputIP" required="required" placeholder="Введите IP"
-                                        value={this.state.IP}
-                                        onChange={this.handleChangeIP} />
+                                    <input type="text" className="form-control" id="InputIP" required="required" placeholder="Введите IP" value={this.state.IP} onChange={this.handleChangeIP} />
+                                </div>
+
+                                <div className="form-group">
+                                    <label className="control-label required">Начальное количество баллов перед началом тренировки</label>
+                                    <p></p>
+                                    <input type="number" className="form-control" id="InputCount" onChange={this.handleChangeCount} value={this.state.count} placeholder="Введите количество баллов" />
                                 </div>
                             </form>
                         </ModalBody>
