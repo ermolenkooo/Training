@@ -4,36 +4,36 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 export class ContextMenus extends Component {
     constructor(props) {
         super(props);
-        this.state = { modal: false, showTimeMenu: false, showFuncMenu: false, showConditionMenu: false, showEventsMenu: false, modalTime: false };
+        this.state = { modal: false, showTimeMenu: false, showFuncMenu: false, showConditionMenu: false, showMarkMenu: false, modalTime: false };
         this.functionClick = this.functionClick.bind(this);
         this.conditionClick = this.conditionClick.bind(this);
-        this.eventsClick = this.eventsClick.bind(this);
+        this.markClick = this.markClick.bind(this);
         this.menuClick5 = this.menuClick5.bind(this);
         this.timeClick = this.timeClick.bind(this);
         this.onAddFunction = this.onAddFunction.bind(this);
     }
     timeClick(str) {
-        this.setState({ showTimeMenu: !this.state.showTimeMenu, showEventsMenu: false, showConditionMenu: false, showFuncMenu: false });
+        this.setState({ showTimeMenu: !this.state.showTimeMenu, showMarkMenu: false, showConditionMenu: false, showFuncMenu: false });
         if (str != "")
             this.props.add(str);
     }
     functionClick(str) {
-        this.setState({ showFuncMenu: !this.state.showFuncMenu, showEventsMenu: false, showConditionMenu: false, showTimeMenu: false });
+        this.setState({ showFuncMenu: !this.state.showFuncMenu, showMarkMenu: false, showConditionMenu: false, showTimeMenu: false });
         if (str != "")
             this.props.add(str);
     }
-    eventsClick(str) {
-        this.setState({ showEventsMenu: !this.state.showEventsMenu, showFuncMenu: false, showConditionMenu: false, showTimeMenu: false });
+    markClick(str) {
+        this.setState({ showMarkMenu: !this.state.showMarkMenu, showFuncMenu: false, showConditionMenu: false, showTimeMenu: false });
         if (str != "")
             this.props.add(str);
     }
     conditionClick(str) {
-        this.setState({ showConditionMenu: !this.state.showConditionMenu, showFuncMenu: false, showEventsMenu: false, showTimeMenu: false });
+        this.setState({ showConditionMenu: !this.state.showConditionMenu, showFuncMenu: false, showMarkMenu: false, showTimeMenu: false });
         if (str != "")
             this.props.add(str);
     }
     menuClick5() {
-        
+
     }
     onAddFunction() {
         this.toggleTime();
@@ -43,7 +43,7 @@ export class ContextMenus extends Component {
     render() {
         var functionClick = this.functionClick;
         var conditionClick = this.conditionClick;
-        var eventsClick = this.eventsClick;
+        var markClick = this.markClick;
         var timeClick = this.timeClick;
         return (
             <div className="horizontalLeft">
@@ -58,21 +58,15 @@ export class ContextMenus extends Component {
                         <li key="2" onClick={(ev) => { this.functionClick(""); }}>
                             Функция
                         </li>
-                        <li key="3" onClick={(ev) => { this.eventsClick(""); }}>
-                            Событие
-                        </li>
-                        <li key="4" onClick={(ev) => { this.conditionClick(""); }}>
+                        <li key="3" onClick={(ev) => { this.markClick(""); }}>
                             Оценка
-                        </li>
-                        <li key="5" onClick={this.menuClick5}>
-                            Обозначить событие
                         </li>
                     </ul>
                     <p></p>
                 </div>
 
                 {this.state.showFuncMenu && <ContextMenusFunction toggle={functionClick} />}
-                {this.state.showEventsMenu && <ContextMenusEvents toggle={eventsClick} />}
+                {this.state.showMarkMenu && <ContextMenusMark toggle={markClick} />}
                 {this.state.showConditionMenu && <ContextMenusCondition style={{ marginLeft: 10, marginTop: 15 }} toggle={conditionClick} />}
                 {this.state.showTimeMenu && <ContextMenusTime style={{ marginLeft: 10, marginTop: 15 }} toggle={timeClick} />}
 

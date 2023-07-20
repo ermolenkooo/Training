@@ -63,6 +63,13 @@ ul.right-menus li:hover {
     justify-content: center;
 }
 
+.menuCondition {
+    background-color: rgb(68, 67, 67);
+    border-radius: 4px;
+    margin: 20px;
+    padding: 10px;
+}
+
 .function {
     min-width: 80px;
     height: 60px;

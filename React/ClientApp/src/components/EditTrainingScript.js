@@ -222,7 +222,7 @@ export class EditTrainingScript extends React.Component {
                 </div>
 
                 <div>
-                    <div class="parent">
+                    <div className="parent">
                         <Button style={{ margin: 10 }} onClick={this.selectAll}>Выделить все</Button>
                         <Button style={{ margin: 10 }} onClick={this.unselectAll}>Снять выделение со всех</Button>
                         <Button style={{ margin: 10 }} onClick={this.toggleOper}>Добавить операцию</Button>
