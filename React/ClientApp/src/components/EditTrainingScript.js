@@ -222,26 +222,36 @@ export class EditTrainingScript extends React.Component {
                 </div>
 
                 <div>
-                    <div className="parent">
-                        <Button style={{ margin: 10 }} onClick={this.selectAll}>Выделить все</Button>
-                        <Button style={{ margin: 10 }} onClick={this.unselectAll}>Снять выделение со всех</Button>
-                        <Button style={{ margin: 10 }} onClick={this.toggleOper}>Добавить операцию</Button>
-                        <Button style={{ margin: 10 }} onClick={this.deleteFRow}>Удалить</Button>
-                        <Button style={{ margin: 10 }} onClick={this.execute}>Выполнить все операции последовательно</Button>
-                        <Evaluation id_training={this.state.id_training} />
-                        {/*<Button style={{ margin: 10 }}><Link to={{ pathname: "/evaluation", id_training: this.state.id_training }}>Перейти к оценке тренировки</Link></Button>*/}
-                    </div>
+                    <ul className="tab-list">
+                        <li className="tabs active-tabs">Tab 1</li>
+                        <li className="tabs">Tab 2</li>
+                    </ul>
+                    <div className="content-container">
+                        
+                            <div className="parent">
+                                <Button style={{ margin: 10 }} onClick={this.selectAll}>Выделить все</Button>
+                                <Button style={{ margin: 10 }} onClick={this.unselectAll}>Снять выделение со всех</Button>
+                                <Button style={{ margin: 10 }} onClick={this.toggleOper}>Добавить операцию</Button>
+                                <Button style={{ margin: 10 }} onClick={this.deleteFRow}>Удалить</Button>
+                                <Button style={{ margin: 10 }} onClick={this.execute}>Выполнить все операции последовательно</Button>
+                                <Evaluation id_training={this.state.id_training} />
+                                {/*<Button style={{ margin: 10 }}><Link to={{ pathname: "/evaluation", id_training: this.state.id_training }}>Перейти к оценке тренировки</Link></Button>*/}
+                            </div>
 
-                    <p></p>
+                            <p></p>
 
-                    <div>
-                        {
-                            this.state.operations.map(function (o) {
-                                return <Operation key={o.id} operation={o} types={types} commands={commands} />
-                            })
-                        }
+                            <div>
+                                {
+                                    this.state.operations.map(function (o) {
+                                        return <Operation key={o.id} operation={o} types={types} commands={commands} />
+                                    })
+                                }
+                            </div>
+                        </div>
+                        <div className="content"><h2>Ipsum</h2></div>
                     </div>
-                </div>
+                    
+                    
 
                 <Modal isOpen={this.state.modalOper}>
                     <form>

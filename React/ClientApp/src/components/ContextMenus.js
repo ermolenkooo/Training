@@ -4,13 +4,12 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 export class ContextMenus extends Component {
     constructor(props) {
         super(props);
-        this.state = { modal: false, showTimeMenu: false, showFuncMenu: false, showConditionMenu: false, showEventsMenu: false, modalTime: false };
+        this.state = { showTimeMenu: false, showFuncMenu: false, showConditionMenu: false, showEventsMenu: false };
         this.functionClick = this.functionClick.bind(this);
         this.conditionClick = this.conditionClick.bind(this);
         this.eventsClick = this.eventsClick.bind(this);
         this.menuClick5 = this.menuClick5.bind(this);
         this.timeClick = this.timeClick.bind(this);
-        this.onAddFunction = this.onAddFunction.bind(this);
     }
     timeClick(str) {
         this.setState({ showTimeMenu: !this.state.showTimeMenu, showEventsMenu: false, showConditionMenu: false, showFuncMenu: false });
@@ -35,10 +34,6 @@ export class ContextMenus extends Component {
     menuClick5() {
         
     }
-    onAddFunction() {
-        this.toggleTime();
-        this.props.add("t ⩾ " + this.state.time + this.state.units);
-    }
 
     render() {
         var functionClick = this.functionClick;
@@ -61,10 +56,7 @@ export class ContextMenus extends Component {
                         <li key="3" onClick={(ev) => { this.eventsClick(""); }}>
                             Событие
                         </li>
-                        <li key="4" onClick={(ev) => { this.conditionClick(""); }}>
-                            Оценка
-                        </li>
-                        <li key="5" onClick={this.menuClick5}>
+                        <li key="4" onClick={this.menuClick5}>
                             Обозначить событие
                         </li>
                     </ul>
@@ -133,54 +125,6 @@ export class ContextMenusEvents extends Component {
                         })
                     }
                 </ul>
-            </div>
-        );
-    }
-}
-
-export class ContextMenusMark extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { modal: false, mark: "" };
-        this.toggle = this.toggle.bind(this);
-        this.handleChangeMark = this.handleChangeMark.bind(this);
-        this.onAddMark = this.onAddMark.bind(this);
-    }
-    toggle() {
-        this.setState({ modal: !this.state.modal });
-    }
-    handleChangeMark(event) {
-        this.setState({ mark: event.target.value });
-    }
-    onAddMark() {
-        this.props.toggle("Снять " + this.state.mark + " баллов");
-    }
-    render() {
-        return (
-            <div>
-                <ul className="right-menus">
-                    <li key="1" onClick={this.toggle}>
-                        Снять
-                    </li>
-                </ul>
-
-                {/*модальное окно выбора баллов для снятия*/}
-                <Modal isOpen={this.state.modal}>
-                    <form>
-                        <ModalHeader><h5>Окно выбора баллов для снятия</h5></ModalHeader>
-
-                        <ModalBody>
-                            <form>
-                                <input typeName="number" value={this.state.mark} onChange={this.handleChangeMark} />
-                            </form>
-                        </ModalBody>
-
-                        <ModalFooter>
-                            <Button className="btn btn-success" onClick={this.onAddMark}>OK</Button>
-                            <Button color="danger" onClick={this.toggle}>Отмена</Button>
-                        </ModalFooter>
-                    </form>
-                </Modal>
             </div>
         );
     }
@@ -291,7 +235,7 @@ export class ContextMenusTime extends Component {
         this.setState({ modal: !this.state.modal });
     }
     ok() {
-        this.props.toggle("");
+        this.props.toggle("t ⩾ " + this.state.time + this.state.units);
     }
     render() {
         return (
